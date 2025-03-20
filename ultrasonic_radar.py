@@ -1,9 +1,30 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
+import serial
 import time
 import random
 import threading
+from itertools import cycle
+
+dummy_angles = cycle(list(range(0, 181, 1)) + list(range(179, 0, -1)))
+distance1 = 150
+distance2 = 68
+distance3 = 0
+objects_coordinates = {}
+def make_fake_coordinates():
+    for angle in list(range(0, 181, 1)):
+        if 160 > angle > 120:
+            distance = distance1
+            objects_coordinates[angle] = distance
+        elif 90 > angle > 78:
+            distance = distance2
+        else:
+            distance = distance3
+
+        objects_coordinates[angle] = distance
+
+
 
 
 class Radar:
@@ -14,12 +35,14 @@ class Radar:
     MAX_ANGLE_RAD = np.pi
     MAX_ANGLE_DEG = 180
     THETA_GRID_NR = 7
-    TICKS_NR = 5
+    TICKS_NR = 9
 
+    # def __init__(self, com_port):
     def __init__(self):
         mpl.rcParams['toolbar'] = 'None'
         plt.ion()
 
+        # self.serial = serial.Serial(com_port)
         self.__fig, self.__ax = plt.subplots(subplot_kw={'projection': 'polar', 'facecolor': 'darkgreen'})
         self.__manager = self.__fig.canvas.manager
 
@@ -34,7 +57,7 @@ class Radar:
         self.distance_object = []
 
         self.__scan_line, = self.__ax.plot([], color='lightblue', linewidth=2)
-        self.__points, = self.__ax.plot([], linewidth=0, markersize=10, marker='o', color='red')
+        self.__points, = self.__ax.plot([], linewidth=0, markersize=5, marker='x', color='red')
 
         self.__inverted_scan_direction = False
 
@@ -53,28 +76,26 @@ class Radar:
         self.__ax.set_thetagrids(np.linspace(self.MIN_ANGLE, self.MAX_ANGLE_DEG, self.THETA_GRID_NR))
 
     def run(self):
-        obj_rad = np.pi / 2
-        dist = 75
-        mul = 0
-        while plt.fignum_exists(self.__fig.number):
-            if np.pi / 180 * mul == obj_rad:
-                self.theta_object.insert(0, obj_rad)
-                self.distance_object.insert(0, dist)
-            self.__scan_line.set_data(self.__scan + np.pi / 180 * mul, self.__radius)
-            self.__points.set_data(self.theta_object, self.distance_object)
+        make_fake_coordinates()
+        for angle in dummy_angles:
+            if plt.fignum_exists(self.__fig.number):
+                if objects_coordinates.get(angle) > self.MIN_DISTANCE:
+                    self.theta_object.insert(0, np.pi / 180 * angle)
+                    self.distance_object.insert(0, objects_coordinates.get(angle))
 
-            self.__fig.canvas.draw()
-            self.__fig.canvas.flush_events()
-            if mul >= 180:
-                self.__inverted_scan_direction = True
-                self.theta_object.clear()
-                self.distance_object.clear()
-            if mul <= 0:
-                self.theta_object.clear()
-                self.distance_object.clear()
-                self.__inverted_scan_direction = False
-            if self.__inverted_scan_direction:
-                mul -= 2
+                self.__scan_line.set_data(self.__scan + np.pi / 180 * angle, self.__radius)
+                self.__points.set_data(self.theta_object, self.distance_object)
+
+                # self.__fig.canvas.draw()
+                self.__fig.canvas.flush_events()
+                if angle >= 180:
+                    self.theta_object.clear()
+                    self.distance_object.clear()
+                if angle <= 0:
+                    self.theta_object.clear()
+                    self.distance_object.clear()
             else:
-                mul += 2
+                exit(0)
 
+# radar = Radar()
+# radar.run()
