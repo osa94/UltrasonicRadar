@@ -79,19 +79,19 @@ class Radar:
         make_fake_coordinates()
         for angle in dummy_angles:
             if plt.fignum_exists(self.__fig.number):
-                if objects_coordinates.get(angle) > self.MIN_DISTANCE:
-                    self.theta_object.insert(0, np.pi / 180 * angle)
+                if objects_coordinates.get(angle) > self.MIN_DISTANCE and objects_coordinates.get(angle) <= self.MAX_DISTANCE:
+                    self.theta_object.insert(0, np.pi / self.MAX_ANGLE_DEG * angle)
                     self.distance_object.insert(0, objects_coordinates.get(angle))
 
-                self.__scan_line.set_data(self.__scan + np.pi / 180 * angle, self.__radius)
+                self.__scan_line.set_data(self.__scan + np.pi / self.MAX_ANGLE_DEG * angle, self.__radius)
                 self.__points.set_data(self.theta_object, self.distance_object)
 
                 # self.__fig.canvas.draw()
                 self.__fig.canvas.flush_events()
-                if angle >= 180:
+                if angle >= self.MAX_ANGLE_DEG:
                     self.theta_object.clear()
                     self.distance_object.clear()
-                if angle <= 0:
+                if angle <= self.MIN_ANGLE:
                     self.theta_object.clear()
                     self.distance_object.clear()
             else:
