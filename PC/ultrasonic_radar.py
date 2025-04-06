@@ -2,29 +2,6 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 import serial
-import time
-import random
-import threading
-from itertools import cycle
-
-dummy_angles = cycle(list(range(0, 181, 1)) + list(range(179, 0, -1)))
-distance1 = 150
-distance2 = 68
-distance3 = 0
-objects_coordinates = {}
-def make_fake_coordinates():
-    for angle in list(range(0, 181, 1)):
-        if 160 > angle > 120:
-            distance = distance1
-            objects_coordinates[angle] = distance
-        elif 90 > angle > 78:
-            distance = distance2
-        else:
-            distance = distance3
-
-        objects_coordinates[angle] = distance
-
-
 
 
 class Radar:
@@ -37,12 +14,11 @@ class Radar:
     THETA_GRID_NR = 7
     TICKS_NR = 9
 
-    # def __init__(self, com_port):
-    def __init__(self):
+    def __init__(self, com_name):
         mpl.rcParams['toolbar'] = 'None'
+        mpl.use('Tkagg')
         plt.ion()
 
-        # self.serial = serial.Serial(com_port)
         self.__fig, self.__ax = plt.subplots(subplot_kw={'projection': 'polar', 'facecolor': 'darkgreen'})
         self.__manager = self.__fig.canvas.manager
 
@@ -61,11 +37,13 @@ class Radar:
 
         self.__inverted_scan_direction = False
 
+        self.__serial_connection = serial.Serial(com_name)
+
     def __set_fig_params(self):
         self.__fig.set_facecolor('black')
 
     def __set_manager_params(self):
-        self.__manager.window.showMaximized()
+        self.__manager.window.state('zoomed')
         self.__manager.set_window_title('Radar')
 
     def __set_ax_params(self):
@@ -76,12 +54,17 @@ class Radar:
         self.__ax.set_thetagrids(np.linspace(self.MIN_ANGLE, self.MAX_ANGLE_DEG, self.THETA_GRID_NR))
 
     def run(self):
-        make_fake_coordinates()
-        for angle in dummy_angles:
+        while True:
+            mes = self.__serial_connection.read_until(expected=b'\r')
+            mes = mes.decode('utf-8')
+            angle, dist = mes.split(',')
+            dist = float(dist)
+            angle = int(angle)
+
             if plt.fignum_exists(self.__fig.number):
-                if objects_coordinates.get(angle) > self.MIN_DISTANCE and objects_coordinates.get(angle) <= self.MAX_DISTANCE:
+                if self.MIN_DISTANCE < dist <= self.MAX_DISTANCE:
                     self.theta_object.insert(0, np.pi / self.MAX_ANGLE_DEG * angle)
-                    self.distance_object.insert(0, objects_coordinates.get(angle))
+                    self.distance_object.insert(0, dist)
 
                 self.__scan_line.set_data(self.__scan + np.pi / self.MAX_ANGLE_DEG * angle, self.__radius)
                 self.__points.set_data(self.theta_object, self.distance_object)
@@ -95,7 +78,5 @@ class Radar:
                     self.theta_object.clear()
                     self.distance_object.clear()
             else:
+                self.__serial_connection.close()
                 exit(0)
-
-# radar = Radar()
-# radar.run()
