@@ -14,7 +14,11 @@ class Radar:
     THETA_GRID_NR = 7
     TICKS_NR = 9
 
-    def __init__(self, com_name):
+    def __init__(self, com_name: str) -> None:
+        """
+
+        :param com_name: Serial port name
+        """
         mpl.rcParams['toolbar'] = 'None'
         mpl.use('Tkagg')
         plt.ion()
@@ -39,22 +43,40 @@ class Radar:
 
         self.__serial_connection = serial.Serial(com_name)
 
-    def __set_fig_params(self):
+    def __set_fig_params(self) -> None:
+        """
+        Method responsible for setting the figure parameters.
+        :return: None
+        """
         self.__fig.set_facecolor('black')
 
-    def __set_manager_params(self):
+    def __set_manager_params(self) -> None:
+        """
+        Method responsible for setting the manager parameters.
+        :return: None
+        """
         self.__manager.window.state('zoomed')
         self.__manager.set_window_title('Radar')
 
-    def __set_ax_params(self):
+    def __set_ax_params(self) -> None:
+        """
+        Method responsible for setting the axes parameters.
+        :return: None
+        """
         self.__ax.set_ylim(self.MIN_DISTANCE, self.MAX_DISTANCE)
         self.__ax.set_xlim(self.MIN_ANGLE, self.MAX_ANGLE_RAD)
         self.__ax.tick_params(labelcolor='white')
         self.__ax.set_rticks(np.linspace(self.MIN_DISTANCE, self.MAX_DISTANCE, self.TICKS_NR))
         self.__ax.set_thetagrids(np.linspace(self.MIN_ANGLE, self.MAX_ANGLE_DEG, self.THETA_GRID_NR))
 
-    def run(self):
+    def run(self) -> None:
+        """
+        Method responsible for running the Radar.
+        :return: None
+        """
         while True:
+            self.__serial_connection.flushInput()
+            self.__serial_connection.flushOutput()
             mes = self.__serial_connection.read_until(expected=b'\r')
             mes = mes.decode('utf-8')
             angle, dist = mes.split(',')

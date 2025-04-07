@@ -1,0 +1,3 @@
+cp ../pico2w/ultrasonic_sensor.py /pyboard/ultrasonic_sensor.py
+cp ../pico2w/servo.py /pyboard/servo.py
+cp ../pico2w/main.py /pyboard/main.py

@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 class Pico2WProgrammer(ArgumentParser):
     DEFAULT_BUFFER_SIZE = 512
     DEFAULT_PORT = 'COM7'
-    DEFAULT_FILENAME = 'pico2w_program_commands.txt'
+    DEFAULT_FILENAME = 'program_pico2w/pico2w_program_commands.txt'
 
     def __init__(self):
         super().__init__()

@@ -1,3 +1,0 @@
-cp ./pico2w/micropython_code/ultrasonic_sensor.py /pyboard/ultrasonic_sensor.py
-cp ./pico2w/micropython_code/servo.py /pyboard/servo.py
-cp ./pico2w/micropython_code/main.py /pyboard/main.py
