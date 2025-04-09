@@ -1,0 +1,5 @@
+{
+  "default_port": "COM7",
+  "default_buffer_size": 512,
+  "default_filename": "program_pico2w/pico2w_program_commands.txt"
+}

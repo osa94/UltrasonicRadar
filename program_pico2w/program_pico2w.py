@@ -1,10 +1,13 @@
 import subprocess
 from argparse import ArgumentParser
+import json
 
 class Pico2WProgrammer(ArgumentParser):
-    DEFAULT_BUFFER_SIZE = 512
-    DEFAULT_PORT = 'COM7'
-    DEFAULT_FILENAME = 'program_pico2w/pico2w_program_commands.txt'
+    with open('config/config.json', 'r') as config_file:
+        data = json.load(config_file)
+        DEFAULT_BUFFER_SIZE = data['default_buffer_size']
+        DEFAULT_PORT = data['default_port']
+        DEFAULT_FILENAME = data['default_filename']
 
     def __init__(self):
         super().__init__()

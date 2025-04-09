@@ -9,7 +9,7 @@ class UltrasonicSensorHCSR04:
     def __init__(self,
                  trigger_pin_nr: int,
                  echo_pin_nr: int,
-                 timeout_us: int =11_600) -> None:
+                 timeout_us: int =11_000) -> None:
         """
         :param trigger_pin_nr: Trigger pin number (GP)
         :param echo_pin_nr: Echo pin number (GP)
