@@ -15,13 +15,18 @@ Application was used on Windows 10
 - cable USB - microUSB
 
 ## Setup
-1. Connect the device as shown in the electrical diagram
-2. Download and install python 3.10 (https://www.python.org/downloads/)
-3. Execute command: ``` pip install -r requirements.txt ```
-4. Download .uf2 file (pico 2w) from https://micropython.org/download/
-5. Press boot button on pico 2w and copy file .uf2
-6. Reconnect pico2w
-7. change default_port name to your port name in config/config.json
-8. Program pico: ``` python .\program_pico2w\program_pico2w.py ```
-9. Reconnect pico2w
-10. Execute command: ``` python .\main.py ```
+1. Mount HC-SR04 on mounting bracket
+2. Connect the devices as shown in the electrical diagram
+3. Download and install python 3.10 (https://www.python.org/downloads/)
+4. Execute command: ``` pip install -r requirements.txt ```
+5. Download .uf2 file (pico 2w) from https://micropython.org/download/
+6. Press boot button on pico 2w and copy file .uf2
+7. Reconnect pico2w
+8. Change default_port name to your port name in config/config.json
+9. Program pico: ``` python .\program_pico2w\program_pico2w.py ```
+10. Reconnect pico2w
+11. Execute command: ``` python .\main.py ```
+
+## TODO:
+1. Add bluetooth communication between pico 2w and PC
+2. Add containerization
